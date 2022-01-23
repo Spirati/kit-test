@@ -5,11 +5,13 @@ import { onMount } from 'svelte';
     
     let ready = false
     let word = ""
+    let words = []
     onMount(() => {
         fetch("./words.json").then(
             res => {
                 res.json().then(
                     j => {
+                        words = j.words
                         word = j.words[Math.floor(Math.random()*j.words.length)].toUpperCase()
                         ready = true
                     }
@@ -30,7 +32,6 @@ import { onMount } from 'svelte';
     let cellValues = Array(6).fill(0).map(
         () => new Array(5).fill(0).map(() => CellValues.WRONG)
     )
-    console.log(cellValues)
 
     const Range = (a: number, b: number = null) => {
         if (b == null) {
@@ -53,6 +54,11 @@ import { onMount } from 'svelte';
         if (e.key == "Enter") {
             if (currentGuess.length < 5) {
                 alert("Not enough letters")
+                return
+            }
+            console.log(words.indexOf(currentGuess.toLowerCase()))
+            if (words.indexOf(currentGuess.toLowerCase()) == -1) {
+                alert("Not in word list")
                 return
             }
             for (let i = 0; i < 5; i++) {
